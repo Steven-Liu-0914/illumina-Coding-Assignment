@@ -1,0 +1,135 @@
+﻿<!-- ContactList.razor -->
+@page "/"
+@using illumina_Coding_Assignment.Models
+@using illumina_Coding_Assignment.Services
+@using Microsoft.AspNetCore.Components.Forms
+@inject ContactService contactService
+@using Microsoft.AspNetCore.Components
+@inject IJSRuntime JsRuntime;
+
+<PageTitle>Phone Book</PageTitle>
+
+<h3>Phone Book</h3>
+
+<div class="container" style=" margin-left: 0px; margin-top: 30px; ">
+
+    <div class="row mb-2">
+        <div class="col">
+            <input type="text" class="form-control" placeholder="Search by name or address" @bind="searchKeyword"  />
+        </div>
+        <div class="col">
+            <select class="form-control" @bind="selectedCountry" >
+                <option value="">All Countries</option>
+                @foreach (var country in contactService.CountryCodes)
+                {
+                    <option value="@country.Code">@country.Code - @country.Country</option>
+                }
+            </select>
+        </div>
+        <div class="col text-right">
+            <button class="btn btn-primary" @onclick="SearchContacts">Search</button>           
+            <button class="btn btn-primary" @onclick="CreateNewContact" style="margin-left:10px">Create New Contact</button>
+        </div>
+
+    </div>
+   
+    @if (filteredContacts != null && filteredContacts.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Address</th>
+                    <th>Postal Code</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var contact in filteredContacts.OrderBy(c => c.Name))
+                {
+                    <tr>
+                        <td>@contact.Name</td>
+                        <td>(@contact.CountryCode) @contact.PhoneNumber</td>
+                        <td>@($"{contact.UnitNo}, {contact.Street}, {contact.City}")</td>
+                        <td>@contact.PostalCode</td>
+                        <td>
+                            <button class="btn btn-info btn-sm" @onclick="() => UpdateContact(contact)">Update</button>
+                            <button class="btn btn-danger btn-sm" @onclick="() => ConfirmDeleteContact(contact)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No contacts found.</p>
+    }
+</div>
+
+<ContactPopup Contact="@selectedContact" OnSaveContact="SaveContact" />
+
+@code {
+    private Contact selectedContact;
+    private string searchKeyword;
+    private string selectedCountry { set; get; }
+
+
+    private IEnumerable<Contact> filteredContacts;
+
+    protected override void OnInitialized()
+    {
+        filteredContacts = contactService._allContacts;
+    }
+
+    private void SearchContacts()
+    {
+        filteredContacts = contactService._allContacts.Where(contact =>
+            (string.IsNullOrWhiteSpace(searchKeyword) || contact.Name.Contains(searchKeyword, StringComparison.OrdinalIgnoreCase) ||
+            (contact.UnitNo+contact.Street+contact.City+contact.PostalCode).Contains(searchKeyword, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrWhiteSpace(selectedCountry) || contact.CountryCode == selectedCountry));
+    }
+
+    private void CreateNewContact()
+    {
+        Contact c = new Contact();
+        c.Id = Guid.Empty;
+        selectedContact = c;
+    }
+
+    private void UpdateContact(Contact contact)
+    {
+        selectedContact = contact;
+    }
+
+    private async Task SaveContact(Contact contact)
+    {
+        if (selectedContact.Id == Guid.Empty)
+        {
+            contactService.AddContact(contact);
+        }
+        else
+        {
+            contactService.UpdateContact(contact);
+        }
+
+        // Reset selected contact after save
+        selectedContact = null;
+    }
+
+    private async Task ConfirmDeleteContact(Contact contact)
+    {
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this contact?");
+        if (confirmed)
+        {
+            DeleteContact(contact);
+        }
+    }
+
+    private void DeleteContact(Contact contact)
+    {
+        contactService.DeleteContact(contact.Id);
+    }
+}
+

@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "illumina Coding Assignment", "illumina Coding Assignment\illumina Coding Assignment.csproj", "{A454B519-DA9B-4F0E-9C5D-50FB9666AEDF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A454B519-DA9B-4F0E-9C5D-50FB9666AEDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A454B519-DA9B-4F0E-9C5D-50FB9666AEDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A454B519-DA9B-4F0E-9C5D-50FB9666AEDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A454B519-DA9B-4F0E-9C5D-50FB9666AEDF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E55B5E13-57EC-466B-9E5C-0A761D3483DE}
+	EndGlobalSection
+EndGlobal
